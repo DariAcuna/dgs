@@ -3,10 +3,12 @@ outputCMD = os.popen('ls /dev/ttyU*').read()
 devices = outputCMD.split("\n")
 devices.remove('')
 
+import sys
+
 import serial
 seriales = []
 sensores = []
-f = open("GAS.txt", "a")
+#f = open("GAS.txt", "a")
 for i in range(len(devices)):
     seriales.append(serial.Serial(devices[i]))
     seriales[i].write(b'e')
@@ -16,8 +18,8 @@ for i in range(len(devices)):
         else:
             seriales[i].readline()
     print("Sensor "+str(i)+": "+sensores[i]+".")
-    f.write(sensores[i]+"\t")
-f.write("T (C)")
+    #f.write(sensores[i]+"\t")
+#f.write("T (C)")
 
 import time
 running = True
@@ -27,7 +29,7 @@ end = unaHora*3
 start = time.time()
 while running:
     try:
-        f.write("\n")
+        #f.write("\n")
         print("Iniciando bloque...")
         temp = 0.0
         for ser in seriales:
@@ -43,8 +45,8 @@ while running:
                 else:
                     rpt = -1
             print(ser.name)       
-            f.write(str(rpt)+"\t")
-        f.write(str(temp/len(devices)))
+            #f.write(str(rpt)+"\t")
+        #f.write(str(temp/len(devices)))
         print(output[-3]+":"+output[-2]+":"+output[-1]+" Done...")
         
         if time.time() - start > unaHora and cero == False:
@@ -60,8 +62,10 @@ while running:
         # if time.time() - start > end:
         #     running = False 
     except KeyboardInterrupt:
-        f.close()
+        #f.close()
+        print("End...")
+        sys.exit()
 
 if running == False:
-    f.close()
+    #f.close()
     print("Tu tiempo se termino.")
