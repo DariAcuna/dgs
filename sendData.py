@@ -210,6 +210,9 @@ def run():
     #Gases
     gases = initGases()
     print(gases) # gases['so2'] = serial.Serial('/dev/ttyUSBx')
+    
+    #Sonido
+    #chan = initSonido()
 
     while True:
 #       mySensorCS811.real_algorithm_results()
@@ -344,7 +347,11 @@ def run():
             'o3':{ # Procede
                 'type': 'Float',
                 'value': o3
-            }            
+            }
+            #'sonido':{ # Procede
+            #    'type': 'Float',
+            #    'value': chan.voltage
+            #} 
         }
         print(data)
         post(data)

@@ -4,6 +4,13 @@ import math
 import veml6075 # holi
 import smbus2 # holi
 
+### sonido
+import board 
+import busio
+import adafruit_ads1x15.ads1115 as ADS
+from adafruit_ads1x15.analog_in import AnalogIn
+###
+
 ####################sensor luz
 addr_ = 0x39
 class adps9300(object):
@@ -130,4 +137,20 @@ def initMPL(bus):
 def initMS(bus):
     bus.write_byte(0x77, 0x1E)
     time.sleep(0.5)
+    
+def initSonido():
+    # Create the I2C bus
+    i2c = busio.I2C(board.SCL, board.SDA)
+
+    # Create the ADC object using the I2C bus
+    ads = ADS.ADS1115(i2c,address=0x49)
+
+    # Create single-ended input on channel 0
+    chan = AnalogIn(ads, ADS.P1)
+
+    # Create differential input between channel 0 and 1
+    #chan = AnalogIn(ads, ADS.P0, ADS.P1)
+    
+    return chan
+    
     
