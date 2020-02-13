@@ -14,9 +14,9 @@ i2c = busio.I2C(board.SCL, board.SDA)
 ads = ADS.ADS1115(i2c,address=0x49)
 print(ads)
 # Create single-ended input on channel 0
-while True:
-    channel = AnalogIn(ads, ADS.P1)
-    print(channel.voltage)
+#while True:
+#    channel = AnalogIn(ads, ADS.P1)
+#    print(channel.voltage)
 
 # digital I/O pins
 WSPEED = 23
@@ -183,7 +183,7 @@ def get_wind_direction():
   return -1 #error, disconnected?
 
 def printWeather():
-  print ('$,winddir='+str(winddir)+',windspeedmph='+str(windspeedmph)+',windgustmph='+str(windgustmph)+',windgustdir='+str(windgustdir)+',windspdmph_avg2m='+str(windspdmph_avg2m)+',winddir_avg2m='+str(winddir_avg2m)+',windgustmph_10m='+str(windgustmph_10m)+',windgustdir_10m='+str(windgustdir_10m)+',rainin='+str(rainin)+',dailyrainin='+str(dailyrainin)+',#')
+  print ('Holi$,winddir='+str(winddir)+',windspeedmph='+str(windspeedmph)+',windgustmph='+str(windgustmph)+',windgustdir='+str(windgustdir)+',windspdmph_avg2m='+str(windspdmph_avg2m)+',winddir_avg2m='+str(winddir_avg2m)+',windgustmph_10m='+str(windgustmph_10m)+',windgustdir_10m='+str(windgustdir_10m)+',rainin='+str(rainin)+',dailyrainin='+str(dailyrainin)+',#')
 
 #WSPEED = digitalio.DigitalInOut(board.D23)
 #WSPEED.direction = digitalio.Direction.INPUT
@@ -196,12 +196,13 @@ io.setup(RAIN, io.IN)
 
 seconds = 0
 lastSecond = millis()
-print('Weather Shield online!')
+print('Weather Shield online!########################################')
 
 #LOOP
 while True:
-  if millis() - lastSecond >= 1000:
-    lastSecond += 1000
+    print("=========================================================")
+    if millis() - lastSecond >= 1000:
+        lastSecond += 1000
 
     seconds_2m += 1
     if seconds_2m > 119:
@@ -239,4 +240,4 @@ while True:
 
     printWeather()
 
-  time.sleep(100)
+    time.sleep(100)

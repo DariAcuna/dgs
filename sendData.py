@@ -212,7 +212,7 @@ def run():
     print(gases) # gases['so2'] = serial.Serial('/dev/ttyUSBx')
     
     #Sonido
-    #chan = initSonido()
+    chan = initSonido()
 
     while True:
 #       mySensorCS811.real_algorithm_results()
@@ -225,16 +225,20 @@ def run():
         
         print("Reading gas data...")
         
-        #so2=readGasSensor(serials[0])
-        #no2=readGasSensor(serials[1])
-        #h2s=readGasSensor(serials[2])
-        #co=readGasSensor(serials[3])
-        #o3=readGasSensor(serials[4])
         so2=readGasSensor(gases['SO2'])
         no2=readGasSensor(gases['NO2'])
         h2s=readGasSensor(gases['H2S'])
         co=readGasSensor(gases['CO'])
         o3=readGasSensor(gases['O3'])
+        
+        sound = value = chan.voltage
+        #value = chan.voltage
+        #if value < 0.7:
+        #    sound = "Silencioso"
+        #elif value < 2:
+        #    sound = "Moderado"
+        #else:
+        #    sound = "Muy bullicioso"
         
         data = {
             'dateObserved': {
@@ -347,11 +351,11 @@ def run():
             'o3':{ # Procede
                 'type': 'Float',
                 'value': o3
+            },
+            'sonido':{ # Procede
+                'type': 'Float',
+                'value': sound
             }
-            #'sonido':{ # Procede
-            #    'type': 'Float',
-            #    'value': chan.voltage
-            #} 
         }
         print(data)
         post(data)
