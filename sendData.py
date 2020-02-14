@@ -208,8 +208,8 @@ def run():
     lux = adps9300()
     
     #Gases
-    gases = initGases()
-    print(gases) # gases['so2'] = serial.Serial('/dev/ttyUSBx')
+    #gases = initGases()
+    #print(gases) # gases['so2'] = serial.Serial('/dev/ttyUSBx')
     
     #Sonido
     chan = initSonido()
@@ -223,8 +223,11 @@ def run():
         pm = readFromPM(bus)
         veml = readFromVEML(bus2)
         
-        print("Reading gas data...")
+        print("Configuring gases...")
+        gases = initGases()
+        print(gases)
         
+        print("Reading gases...")
         so2=readGasSensor(gases['SO2'])
         no2=readGasSensor(gases['NO2'])
         h2s=readGasSensor(gases['H2S'])
@@ -359,7 +362,7 @@ def run():
         }
         print(data)
         post(data)
-        time.sleep(delay)        
+        #time.sleep(delay)        
 
 
 if __name__ == '__main__':
