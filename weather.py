@@ -69,7 +69,7 @@ def init():
   print(ads)
 
   # Create single-ended input on channel 1
-  channel = AnalogIn(ads, ADS.P1)
+  channel = AnalogIn(ads, ADS.P0)
 
 def millis():
   milliseconds = int(round(time.time() * 1000))
@@ -207,8 +207,11 @@ def printWeather():
   print(',windgustdir_10m='+str(windgustdir_10m), end="")
   print(',rainin='+str(rainin), end="")
   print(',dailyrainin='+str(dailyrainin))
+  print("Holi")
 
 def run():
+  global seconds_2m, minutes_10m, windgustmph
+  
   init()
   print('Weather Shield online!########################################')
 
@@ -227,18 +230,21 @@ def run():
 
   #LOOP
   while True:
-      if millis() - lastSecond >= 1000:
-          lastSecond += 1000
+    print("entro")
+    if millis() - lastSecond >= 1000:
+      lastSecond += 1000
 
       seconds_2m += 1
       if seconds_2m > 119:
         seconds_2m = 0
 
+      print("leyendo...")
       currentSpeed = get_wind_speed()
       windspeedmph = currentSpeed
       currentDirection = get_wind_direction()
       windspdavg[seconds_2m] = int(currentSpeed)
       winddiravg[seconds_2m] = currentDirection
+      print("fin lectura...")
 
       # Check to see if this is a gust for the minute
       if currentSpeed > windgust_10m[minutes_10m]:
@@ -265,9 +271,9 @@ def run():
         windgust_10m[minutes_10m] = 0   #Zero out this minute's gust
 
       printWeather()
-
-      time.sleep(100)
-
+        
+    time.sleep(100)
+    print("fin")
 
 if __name__ == '__main__':
     try:
