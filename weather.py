@@ -9,8 +9,8 @@ from adafruit_ads1x15.analog_in import AnalogIn
 # DEFINIENDO VARIABLES GLOBALES
 
 # digital I/O pins
-WSPEED = 23
-RAIN = 24
+WSPEED = 24
+RAIN = 23
 
 # analog I/O pins
 #WDIR = A0
@@ -41,14 +41,9 @@ windspdmph_avg2m = 0
 winddir_avg2m = 0
 windgustmph_10m = 0
 windgustdir_10m = 0
-humidity = 0
-tempf = 0
+
 rainin = 0
 dailyrainin = 0
-pressure = 0
-
-att_lvl = 11.8
-light_lvl = 455
 
 raintime = 0
 rainlast = 0
@@ -59,225 +54,225 @@ channel = None
 
 
 def init():
-  global channel
+    global channel
 
-  # Create the I2C bus
-  i2c = busio.I2C(board.SCL, board.SDA)
+    # Create the I2C bus
+    i2c = busio.I2C(board.SCL, board.SDA)
 
-  # Create the ADC object using the I2C bus
-  ads = ADS.ADS1115(i2c,address=0x49)
-  print(ads)
+    # Create the ADC object using the I2C bus
+    ads = ADS.ADS1115(i2c,address=0x49)
+    ads.gain =2/3
 
-  # Create single-ended input on channel 1
-  channel = AnalogIn(ads, ADS.P0)
+    # Create single-ended input on channel 1
+    channel = AnalogIn(ads, ADS.P0)
 
 def millis():
-  milliseconds = int(round(time.time() * 1000))
-  return milliseconds
+    milliseconds = int(round(time.time() * 1000))
+    return milliseconds
 
 def rainIRQ():
-  global raintime, raininterval, rainlast, dailyrainin, rainHour, minutes
+    global raintime, raininterval, rainlast, dailyrainin, rainHour, minutes
 
-  raintime = millis()
-  raininterval = raintime - rainlast
+    raintime = millis()
+    raininterval = raintime - rainlast
 
-  if raininterval > 10:
-    dailyrainin += 0.011
-    rainHour[minutes] += 0.011 
+    if raininterval > 10:
+        dailyrainin += 0.011
+        rainHour[minutes] += 0.011 
 
-    rainlast = raintime
+        rainlast = raintime
 
 def wspeedIRQ():
-  global lastWindIRQ, windClicks
+    global lastWindIRQ, windClicks
 
-  if millis() - lastWindIRQ > 10:
-    lastWindIRQ = millis()
-    windClicks += 1
+    if millis() - lastWindIRQ > 10:
+        lastWindIRQ = millis()
+        windClicks += 1
 
 def calcWeather():
-  global winddir, windspdavg, windspdmph_avg2m, winddiravg, WIND_DIR_AVG_SIZE, winddir_avg2m, windgustmph_10m, windgust_10m, windgustdir_10m, rainin, rainHour, windgustdirection_10m
+    global winddir, windspdavg, windspdmph_avg2m, winddiravg, WIND_DIR_AVG_SIZE, winddir_avg2m, windgustmph_10m, windgust_10m, windgustdir_10m, rainin, rainHour, windgustdirection_10m
 
-  #Calc winddir
-  winddir = get_wind_direction()
+    #Calc winddir
+    winddir = get_wind_direction()
 
-  #Calc windspeed
-  #windspeedmph = get_wind_speed() #This is calculated in the main loop on line ---
-  
-  #Calc windspdmph_avg2m
-  temp = 0
-  for i in range(120):
-    temp += windspdavg[i]
+    #Calc windspeed
+    #windspeedmph = get_wind_speed() #This is calculated in the main loop on line ---
 
-  temp /= 120.0
-  windspdmph_avg2m = temp
+    #Calc windspdmph_avg2m
+    temp = 0
+    for i in range(120):
+        temp += windspdavg[i]
 
-  # Calc winddir_avg2m, Wind Direction  
-  sum = winddiravg[0]
-  D = winddiravg[0]
+    temp /= 120.0
+    windspdmph_avg2m = temp
 
-  for i in range(1,WIND_DIR_AVG_SIZE):
-    delta = winddiravg[i] - D
+    # Calc winddir_avg2m, Wind Direction  
+    sum = winddiravg[0]
+    D = winddiravg[0]
 
-    if delta < -180:
-      D += delta + 360
-    elif delta > 180:
-      D += delta - 360
-    else:
-      D += delta
+    for i in range(1,WIND_DIR_AVG_SIZE):
+        delta = winddiravg[i] - D
 
-    sum += D
-  
-  winddir_avg2m = sum / WIND_DIR_AVG_SIZE
-  
-  if winddir_avg2m >= 360:
-     winddir_avg2m -= 360
-  
-  if winddir_avg2m < 0:
-    winddir_avg2m += 360
+        if delta < -180:
+            D += delta + 360
+        elif delta > 180:
+            D += delta - 360
+        else:
+            D += delta
 
-  #Calc windgustmph_10m
-  #Calc windgustdir_10m
-  windgustmph_10m = 0
-  windgustdir_10m = 0
+        sum += D
 
-  for i in range(10):
-    if windgust_10m[i] > windgustmph_10m:
-      windgustmph_10m = windgust_10m[i]
-      windgustdir_10m = windgustdirection_10m[i]
+    winddir_avg2m = sum / WIND_DIR_AVG_SIZE
 
-  # Calculate amount of rainfall for the last 60 minutes
-  rainin = 0
+    if winddir_avg2m >= 360:
+        winddir_avg2m -= 360
 
-  for i in range(60):
-    rainin += rainHour[i]
+    if winddir_avg2m < 0:
+        winddir_avg2m += 360
+
+    #Calc windgustmph_10m
+    #Calc windgustdir_10m
+    windgustmph_10m = 0
+    windgustdir_10m = 0
+
+    for i in range(10):
+        if windgust_10m[i] > windgustmph_10m:
+            windgustmph_10m = windgust_10m[i]
+            windgustdir_10m = windgustdirection_10m[i]
+
+    # Calculate amount of rainfall for the last 60 minutes
+    rainin = 0
+    for i in range(60):
+        rainin += rainHour[i]
 
 def get_wind_speed():
-  global lastWindCheck, windSpeed, windClicks
+    global lastWindCheck, windSpeed, windClicks
 
-  deltaTime = millis() - lastWindCheck  #750ms
+    deltaTime = millis() - lastWindCheck  #750ms
 
-  deltaTime /= 1000.0     #Covert to seconds
+    deltaTime /= 1000.0     #Covert to seconds
 
-  windSpeed = windClicks / deltaTime     #3 / 0.750s = 4
+    windSpeed = windClicks / deltaTime     #3 / 0.750s = 4
 
-  windClicks = 0    #Reset and start watching for new wind
-  lastWindCheck = millis()
+    windClicks = 0    #Reset and start watching for new wind
+    lastWindCheck = millis()
 
-  windSpeed *= 1.492    #4 * 1.492 = 5.968MPH
+    windSpeed *= 1.492    #4 * 1.492 = 5.968MPH
 
-  #print("Windspeed: "+str(windSpeed))
+    #print("Windspeed: "+str(windSpeed))
 
-  return windSpeed
+    return windSpeed
 
 def get_wind_direction():
-  global channel
+    global channel
 
-  adc = channel.value
+    #adc = channel.value
+    ads1 = channel.value
+    adc = ads1*1023/32767
+    print(adc)
+    print(channel.voltage)
 
-  #calcWeather()
-  # adc = WDIR #analogRead(WDIR) <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-  # adc = WDIR
-  if adc < 380: return 113
-  if adc < 393: return 68
-  if adc < 414: return 90
-  if adc < 456: return 158
-  if adc < 508: return 135
-  if adc < 551: return 203
-  if adc < 615: return 180
-  if adc < 680: return 23
-  if adc < 746: return 45
-  if adc < 801: return 248
-  if adc < 833: return 225
-  if adc < 878: return 338
-  if adc < 913: return 0
-  if adc < 940: return 293
-  if adc < 967: return 315
-  if adc < 990: return 270
+    #calcWeather()
+    # adc = WDIR #analogRead(WDIR) <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    # adc = WDIR
+    if adc < 380: return 113
+    if adc < 393: return 68
+    if adc < 414: return 90
+    if adc < 456: return 158
+    if adc < 508: return 135
+    if adc < 551: return 203
+    if adc < 615: return 180
+    if adc < 680: return 23
+    if adc < 746: return 45
+    if adc < 801: return 248
+    if adc < 833: return 225
+    if adc < 878: return 338
+    if adc < 913: return 0
+    if adc < 940: return 293
+    if adc < 967: return 315
+    if adc < 990: return 270
 
-  return -1 #error, disconnected?
-
-def printWeather():
-  print('winddir='+str(winddir), end="")
-  print(',windspeedmph='+str(windspeedmph), end="")
-  print(',windgustmph='+str(windgustmph), end="")
-  print(',windgustdir='+str(windgustdir), end="")
-  print(',windspdmph_avg2m='+str(windspdmph_avg2m), end="")
-  print(',winddir_avg2m='+str(winddir_avg2m), end="")
-  print(',windgustmph_10m='+str(windgustmph_10m), end="")
-  print(',windgustdir_10m='+str(windgustdir_10m), end="")
-  print(',rainin='+str(rainin), end="")
-  print(',dailyrainin='+str(dailyrainin))
-  print("Holi")
+    return -1 #error, disconnected?
 
 def run():
-  global seconds_2m, minutes_10m, windgustmph
-  
-  init()
-  print('Weather Shield online!########################################')
+    global seconds_2m, minutes_10m, windgustmph, minutes, windgustdir
 
-  #WSPEED = digitalio.DigitalInOut(board.D23)
-  #WSPEED.direction = digitalio.Direction.INPUT
+    init()
+    print('Weather Shield online!')
 
-  #RAIN = digitalio.DigitalInOut(board.D24)
-  #RAIN.direction = digitalio.Direction.INPUT
+    #WSPEED = digitalio.DigitalInOut(board.D23)
+    #WSPEED.direction = digitalio.Direction.INPUT
+
+    #RAIN = digitalio.DigitalInOut(board.D24)
+    #RAIN.direction = digitalio.Direction.INPUT
     
-  io.setup(WSPEED, io.IN)
-  io.setup(RAIN, io.IN)
+    io.setmode(io.BCM)
+    
+    io.setup(WSPEED, io.IN)
+    io.setup(RAIN, io.IN)
 
-  seconds = 0
-  lastSecond = millis()
+    seconds = 0
+    lastSecond = millis()
   
+    
+    #LOOP
+    while True:
+        tiempo = millis() - lastSecond
+        #print(tiempo)
+        if tiempo >= 1000:
+            lastSecond += 1000
 
-  #LOOP
-  while True:
-    print("entro")
-    if millis() - lastSecond >= 1000:
-      lastSecond += 1000
+            seconds_2m += 1
+            if seconds_2m > 119:
+                seconds_2m = 0
 
-      seconds_2m += 1
-      if seconds_2m > 119:
-        seconds_2m = 0
+            currentSpeed = get_wind_speed()
+            
+            windspeedmph = currentSpeed
+            currentDirection = get_wind_direction()
+            
+            windspdavg[seconds_2m] = int(currentSpeed)
+            winddiravg[seconds_2m] = currentDirection
 
-      print("leyendo...")
-      currentSpeed = get_wind_speed()
-      windspeedmph = currentSpeed
-      currentDirection = get_wind_direction()
-      windspdavg[seconds_2m] = int(currentSpeed)
-      winddiravg[seconds_2m] = currentDirection
-      print("fin lectura...")
+            # Check to see if this is a gust for the minute
+            if currentSpeed > windgust_10m[minutes_10m]:
+                windgust_10m[minutes_10m] = currentSpeed
+                windgustdirection_10m[minutes_10m] = currentDirection
 
-      # Check to see if this is a gust for the minute
-      if currentSpeed > windgust_10m[minutes_10m]:
-        windgust_10m[minutes_10m] = currentSpeed
-        windgustdirection_10m[minutes_10m] = currentDirection
+            # Check to see if this is a gust for the day
+            if currentSpeed > windgustmph:
+                windgustmph = currentSpeed
+                windgustdir = currentDirection
 
-      # Check to see if this is a gust for the day
-      if currentSpeed > windgustmph:
-        windgustmph = currentSpeed
-        windgustdir = currentDirection
+            seconds = seconds + 1
+            if seconds > 59:
+                seconds = 0
 
-      seconds = seconds + 1
-      if seconds > 59:
-        seconds = 0
+                minutes = minutes + 1
+                minutes_10m = minutes_10m + 1
+                if minutes > 59:
+                    minutes = 0
+                if minutes_10m > 9:
+                    minutes_10m = 0
 
-        minutes = minutes + 1
-        minutes_10m = minutes_10m + 1
-        if minutes > 59:
-          minutes = 0
-        if minutes_10m > 9:
-          minutes_10m = 0
-
-        rainHour[minutes] = 0           #Zero out this minute's rainfall amount
-        windgust_10m[minutes_10m] = 0   #Zero out this minute's gust
-
-      printWeather()
-        
-    time.sleep(100)
-    print("fin")
+                rainHour[minutes] = 0           #Zero out this minute's rainfall amount
+                windgust_10m[minutes_10m] = 0   #Zero out this minute's gust
+            calcWeather()
+            print('winddir='+str(winddir), end="")
+            print(',windspeedmph='+str(windspeedmph), end="")
+            print(',windgustmph='+str(windgustmph), end="")
+            print(',windgustdir='+str(windgustdir), end="")
+            print(',windspdmph_avg2m='+str(windspdmph_avg2m), end="")
+            print(',winddir_avg2m='+str(winddir_avg2m), end="")
+            print(',windgustmph_10m='+str(windgustmph_10m), end="")
+            print(',windgustdir_10m='+str(windgustdir_10m), end="")
+            print(',rainin='+str(rainin), end="")
+            print(',dailyrainin='+str(dailyrainin))
+        time.sleep(0.1)
 
 if __name__ == '__main__':
     try:
         run()
     except (KeyboardInterrupt, SystemExit) as exErr:
-      print("\nEnding...")
-      sys.exit(0)
+        print("\nEnding...")
+        sys.exit(0)
