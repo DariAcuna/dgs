@@ -28,6 +28,8 @@ time.sleep(2)
 dataOutput = 'c'.encode()
 serialPort.write(dataOutput)
 
+# TODO: fix data reading inconsistency (ghost data)
+
 try:
     while True:
         # wait until there is data waiting in the serial buffer
