@@ -1,4 +1,4 @@
-from SensorData import  SensorData
+from SensorData import SensorData
 import serial
 
 

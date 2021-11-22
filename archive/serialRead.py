@@ -1,7 +1,7 @@
 import serial
 import time
 
-ser = serial.Serial('/dev/ttyUSB1')
+ser = serial.Serial('/dev/ttyUSB0')
 print(ser.name)
 counter = 0
 while True:

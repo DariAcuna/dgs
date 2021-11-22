@@ -1,18 +1,13 @@
 from __future__ import print_function
-import qwiic_ccs811
 import qwiic_bme280
-import time
 import sys
-from tmp102 import TMP102
+from archive.tmp102 import TMP102
 import serial
-import datetime
-import requests
-import smbus
-import smbus2
 import os
 
-from postRequest import *
-from initData import *
+from archive.postRequest import *
+from archive.initData import *
+
 
 def readGasSensor(ser):
     b = "\r".encode()

@@ -82,7 +82,7 @@ class adps9300(object):
         ch0 = self.bus.read_word_data(self.addr, 0xAC)
         ch1 = self.bus.read_word_data(self.addr, 0xAE)
         block = self.bus.read_i2c_block_data(self.addr, 0, 32)
-        print block
+        print(block)
         #ch1 = self.bus.read_word_data(self.addr, self.REG_CONTROL_CMD | self.REG_CONTROL_WORD | self.REG_DATA1LOW); # 0xAE
         #print ch0
         #print ch1
@@ -122,12 +122,12 @@ class adps9300(object):
         return lux
 
         
-if __name__ == "__main__":
-    try:
-        while(True):
-            x = adps9300()
-            print "Lux value is %s" % x.read_lux()
-            time.sleep(1)
-    except IOError, e:
-        print e
-        print "Error creating connection to i2c.  This must be run as root"
+# if __name__ == "__main__":
+#     try:
+#         while(True):
+#             x = adps9300()
+    #         print "Lux value is %s" % x.read_lux()
+    #         time.sleep(1)
+    # except IOError, e:
+    #     print e
+    #     print "Error creating connection to i2c.  This must be run as root"

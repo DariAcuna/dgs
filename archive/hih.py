@@ -19,5 +19,5 @@ cTemp = (temp / 16384.0) * 165.0 - 40.0
 fTemp = cTemp * 1.8 + 32
 
 # Output data to screen
-print data[0]
-print data[2]
+print(data[0])
+print(data[2])
