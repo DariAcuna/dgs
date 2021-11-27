@@ -1,4 +1,4 @@
-class SensorData:
+class Data:
     def __init__(self, sn, ppb, temp, rh, rawsensor, tempdigital, rhdigital, day, hour, minute, second):
         self.SN = sn
         self.PPB = ppb
