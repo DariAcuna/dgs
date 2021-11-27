@@ -11,3 +11,15 @@ class SensorData:
         self.HOUR = hour
         self.MINUTE = minute
         self.SECOND = second
+
+    # TODO: allow declaration only for parameters within the specified ranges
+    # N [XXXXXXXXXXXX],
+    # PPB [0 : 999999],
+    # TEMP [-99 : 99],
+    # RH [0 : 99],
+    # RawSensor[ADCCount],
+    # TempDigital, RHDigital,
+    # Day [0 : 99],
+    # Hour [0 : 23],
+    # Minute [0 : 59],
+    # Second [0 : 59
