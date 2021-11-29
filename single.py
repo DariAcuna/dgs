@@ -1,8 +1,8 @@
 from utils.sensor import Sensor
 import time
 
-# opens port
-sensor = Sensor(port='')
+# opens port ttyUSB0
+sensor = Sensor(port=0)
 
 # allow the port to open
 time.sleep(3)
@@ -14,17 +14,17 @@ try:
     while True:
 
         # wait until there is data waiting in the serial buffer
-        if sensor.port.in_waiting > 0:
+        if sensor.ser.in_waiting > 0:
 
             dataInput = sensor.get()
 
             print(dataInput)
 
-        sensor.port.flush()
+        sensor.ser.flush()
 
 except KeyboardInterrupt:
     time.sleep(3)
-    sensor.port.flush()
+    sensor.ser.flush()
 
     print('\nStopping continuous data output stream')
     sensor.reset()

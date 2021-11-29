@@ -48,7 +48,9 @@ class Sensor:
 
         # 18 lines counting the Date_Code readout
         gas = decoded_bytes.split('\n', 18)[17]
-        gas_type = gas.split(' ', 1)[1]
+        gas_raw = gas.split(' ', 1)[1]
+        # TODO: fix inconsistency (sometimes -1, sometimes -2)
+        gas_type = gas_raw[:-1]
 
         return gas_type
 

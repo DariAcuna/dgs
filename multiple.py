@@ -2,7 +2,8 @@ from utils.sensor import Sensor
 import time
 
 # output from ports.sh
-ports = [0, 1, 2, 3, 4]
+# TODO: look for permanent fix to ubuntu denying root permission to ports 2-4
+ports = [1, 2]
 sensors = []
 
 # opens ports
@@ -14,17 +15,19 @@ time.sleep(3)
 
 gases = []
 
-for idx in range(5):
-    gases.append(sensors[idx].gas())
-    sensors[idx].ser.flush()
+for sensor in sensors:
+    gases.append(sensor.gas())
+    sensor.ser.flush()
+
+print(gases)
 
 # include in prior for?
 # for idx, _ in range(5):
 #     sensors[idx].ser.flush()
 
 # starts continuous measurement
-for idx in range(5):
-    sensors[idx].start()
+for sensor in sensors:
+    sensor.start()
 
 try:
     while True:
