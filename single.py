@@ -18,7 +18,7 @@ try:
 
             dataInput = sensor.get()
 
-            print(dataInput[0])
+            print(dataInput)
 
         sensor.port.flush()
 
