@@ -1,6 +1,4 @@
-# TODO: properly import class from utils file
-from utils.Sensor import Sensor
-import serial
+from utils.sensor import Sensor
 import time
 
 # opens port
@@ -20,8 +18,7 @@ try:
 
             dataInput = sensor.get()
 
-            # TODO: fix data reading
-            print(dataInput)
+            print(dataInput[0])
 
         sensor.port.flush()
 

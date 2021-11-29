@@ -1,5 +1,3 @@
-# TODO: properly import class
-from .SensorData import Data
 import serial
 import time
 
@@ -31,6 +29,7 @@ class Sensor:
 
         # if received incomplete data, skip
         if not len(available_list) == 11:
+            print('invalid')
             return
 
         return available_list
@@ -71,7 +70,4 @@ class Sensor:
 
     def get(self):
         read = self.__read()
-        data = Data(read[0], read[1], read[2], read[3], read[4],
-                          read[5], read[6], read[7], read[8], read[9],
-                          read[10])
-        return data
+        return read
