@@ -2,9 +2,7 @@ from utils.sensor import Sensor
 import time
 
 # output from ports.sh
-# fails for ports different than 0 and 1
-# TODO: look for permanent fix to ubuntu denying root permission to ports 2-4
-ports = [0, 1, 2]
+ports = [0, 1, 2, 3]
 sensors = []
 
 # opens ports
